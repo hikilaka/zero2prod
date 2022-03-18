@@ -50,3 +50,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/workflows/rust-codecov
+        with:
+          codecov_token: ${{ secrets.CODECOV_TOKEN }}

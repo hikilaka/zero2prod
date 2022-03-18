@@ -1,6 +1,12 @@
 name: Code Coverage
 description: Creates and uploads a code coverage report
 
+inputs:
+  codecov_token:
+    type: string
+    description: The Codecov token to use
+    required: true
+
 runs:
   using: composite
   steps:
@@ -18,7 +24,7 @@ runs:
 
       - uses: codecov/codecov-action@v1.0.2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ inputs.codecov_token }}
 
       - uses: actions/upload-artifact@v1
         with:
