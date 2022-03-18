@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: .github/workflows/rust-cargo
+      - uses: ./.github/workflows/rust-cargo
         with:
           command: check
 
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: .github/workflows/rust-cargo
+      - uses: ./.github/workflows/rust-cargo
         with:
           command: test
 
@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: .github/workflows/rust-cargo
+      - uses: ./.github/workflows/rust-cargo
         with:
           command: fmt
           args: --all -- --check
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: .github/workflows/rust-cargo
+      - uses: ./.github/workflows/rust-cargo
         with:
           command: clippy
           args: -- -D warnings
@@ -49,6 +49,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: .github/workflows/rust-codecov
+      - uses: ./.github/workflows/rust-codecov
         with:
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
