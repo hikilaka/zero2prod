@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: apt install libssl-dev
+      - run: sudo apt install libssl-dev
       - uses: ./.github/workflows/rust-cargo
         with:
           command: install
