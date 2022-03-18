@@ -1,5 +1,6 @@
 name: Cargo
 description: Compile and execute unit and integration tests
+
 inputs:
   command:
     type: string
@@ -10,19 +11,17 @@ inputs:
     description: Arguments passed into the cargo command
     required: false
     default: ""
+
 runs:
   using: composite
   steps:
-    - name: Checkout repository
     - uses: actions/checkout@v2
 
-    - name: Install stable toolchain
     - uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
         override: true
 
-    - name: Run cargo
     - uses: actions-rs/cargo@v1
       with:
         command: ${{ inputs.command }}
