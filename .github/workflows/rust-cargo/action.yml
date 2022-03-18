@@ -13,12 +13,16 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Checkout repository
     - uses: actions/checkout@v2
+
+    - name: Install stable toolchain
     - uses: actions-rs/toolchain@v1
       with:
-        profile: minimal
         toolchain: stable
         override: true
+
+    - name: Run cargo
     - uses: actions-rs/cargo@v1
       with:
         command: ${{ inputs.command }}
