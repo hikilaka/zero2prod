@@ -11,57 +11,44 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - uses: actions-rs/cargo@v1
+      - uses: ./.github/workflows/rust-cargo
         with:
           command: check
 
   test:
-    name: Test Suite
+    name: Run Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - uses: actions-rs/cargo@v1
+      - uses: ./.github/workflows/rust-cargo
         with:
           command: test
 
   fmt:
-    name: Rustfmt
+    name: Format Code
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - run: rustup component add rustfmt
-      - uses: actions-rs/cargo@v1
+      - uses: ./.github/workflows/rust-cargo
         with:
           command: fmt
           args: --all -- --check
 
   clippy:
-    name: Clippy
+    name: Lint Code
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - run: rustup component add clippy
-      - uses: actions-rs/cargo@v1
+      - uses: ./.github/workflows/rust-cargo
         with:
           command: clippy
           args: -- -D warnings
+
+  codecov:
+    name: Codecov
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/workflows/rust-codecov
+        with:
+          codecov_token: ${{ secrets.CODECOV_TOKEN }}
