@@ -3,14 +3,13 @@ name: Continous Integration
 on: [ push, pull_request ]
 
 env:
-  RUNNER_TYPE: ubuntu-latest
   CARGO_TERM_COLOR: always
   GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
 jobs:
   check:
     name: Check
-    runs-on: ${{ env.RUNNER_TYPE }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/workflows/rust-cargo
@@ -19,7 +18,7 @@ jobs:
 
   test:
     name: Run Tests
-    runs-on: ${{ env.RUNNER_TYPE }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/workflows/rust-cargo
@@ -28,7 +27,7 @@ jobs:
 
   fmt:
     name: Format Code
-    runs-on: ${{ env.RUNNER_TYPE }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/workflows/rust-cargo
@@ -38,7 +37,7 @@ jobs:
 
   clippy:
     name: Lint Code
-    runs-on: ${{ env.RUNNER_TYPE }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/workflows/rust-cargo
@@ -48,7 +47,7 @@ jobs:
 
   codecov:
     name: Codecov
-    runs-on: ${{ env.RUNNER_TYPE }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/workflows/rust-codecov
@@ -57,7 +56,7 @@ jobs:
 
   audit:
     name: Audit Codebase
-    runs-on: ${{ env.RUNNER_TYPE }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - run: sudo apt install libssl-dev
@@ -71,7 +70,7 @@ jobs:
 
   deploy:
     name: Deploy
-    runs-on: ${{ env.RUNNER_TYPE }}
+    runs-on: ubuntu-latest
     needs: [ check, test, fmt, clippy, codecov, audit ]
     if: success()
     steps:
