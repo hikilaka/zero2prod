@@ -4,7 +4,7 @@ on: [ push, pull_request ]
 
 env:
   CARGO_TERM_COLOR: always
-  GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+  GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
 jobs:
   check:
@@ -68,8 +68,8 @@ jobs:
         with:
           command: audit
 
-  deploy:
-    name: Deploy SIT
+  validate-infra:
+    name: Validate Infrastructure
     runs-on: ubuntu-latest
     needs: [ check, test, fmt, clippy, codecov, audit ]
     if: success()
@@ -83,18 +83,28 @@ jobs:
           terraform_version: 1.1.7
 
       - name: Terraform Format
-        id: fmt
         run: terraform -chdir=infrastructure fmt -check
 
-      - name: Terraform Init
-        id: init
-        run: terraform -chdir=infrastructure init -no-color
-
       - name: Terraform Validate
-        id: validate
-        run: terraform -chdir=infrastructure validate -no-color
+        run: terraform -chdir=infrastructure validate
+
+  deploy-sit:
+    name: Deploy SIT
+    runs-on: ubuntu-latest
+    needs: validate-infra
+    if: success() && github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.7
+
+      - name: Terraform Init
+        run: terraform -chdir=infrastructure init
 
       - name: Terraform Plan SIT
         id: plan
-        if: github.ref == 'refs/heads/master'
-        run: terraform -chdir=infrastructure plan -var-file=env/dev.tfvars
+        run: terraform -chdir=infrastructure apply -auto-approve -var-file=env/dev.tfvars
