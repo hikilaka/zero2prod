@@ -3,12 +3,14 @@ name: Continous Integration
 on: [ push, pull_request ]
 
 env:
+  RUNNER_TYPE: ubuntu-latest
   CARGO_TERM_COLOR: always
+  GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
 jobs:
   check:
     name: Check
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNNER_TYPE }}
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/workflows/rust-cargo
@@ -17,7 +19,7 @@ jobs:
 
   test:
     name: Run Tests
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNNER_TYPE }}
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/workflows/rust-cargo
@@ -26,7 +28,7 @@ jobs:
 
   fmt:
     name: Format Code
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNNER_TYPE }}
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/workflows/rust-cargo
@@ -36,7 +38,7 @@ jobs:
 
   clippy:
     name: Lint Code
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNNER_TYPE }}
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/workflows/rust-cargo
@@ -46,7 +48,7 @@ jobs:
 
   codecov:
     name: Codecov
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNNER_TYPE }}
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/workflows/rust-codecov
@@ -55,7 +57,7 @@ jobs:
 
   audit:
     name: Audit Codebase
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNNER_TYPE }}
     steps:
       - uses: actions/checkout@v2
       - run: sudo apt install libssl-dev
@@ -66,3 +68,34 @@ jobs:
       - uses: ./.github/workflows/rust-cargo
         with:
           command: audit
+
+  deploy:
+    name: Deploy
+    runs-on: ${{ env.RUNNER_TYPE }}
+    needs: [ check, test, fmt, clippy, codecov, audit ]
+    if: success()
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.7
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform -chdir=infrastructure fmt -check
+
+      - name: Terraform Init
+        id: init
+        run: terraform -chdir=infrastructure init -no-color
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform -chdir=infrastructure validate -no-color
+
+      - name: Terraform Plan SIT
+        id: plan
+        if: github.ref == 'refs/heads/master'
+        run: terraform -chdir=infrastructure plan -var-file=infrastructure/env/dev.tfvars
