@@ -5,7 +5,7 @@ provider "google" {
 
 data "terraform_remote_state" "remote_state" {
   backend = "gcs"
-  config  = {
+  config = {
     bucket = "zero2prod-344606-tf-state"
     prefix = "tf-states/${var.environment}"
   }
