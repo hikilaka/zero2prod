@@ -69,7 +69,7 @@ jobs:
           command: audit
 
   deploy:
-    name: Deploy
+    name: Deploy SIT
     runs-on: ubuntu-latest
     needs: [ check, test, fmt, clippy, codecov, audit ]
     if: success()
@@ -97,4 +97,4 @@ jobs:
       - name: Terraform Plan SIT
         id: plan
         if: github.ref == 'refs/heads/master'
-        run: terraform -chdir=infrastructure plan -var-file=infrastructure/env/dev.tfvars
+        run: terraform -chdir=infrastructure plan -var-file=env/dev.tfvars
