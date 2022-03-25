@@ -31,6 +31,7 @@ schema: `release/*` and the CI/CD pipeline will take care of the rest for you.
 * Complete _the book_!
 * Create IaC for a production environment
 * Test that everything works as intended!
+* Docker
 * Create a more robust pipeline
-    * Templates
-    * Comment on PRs that contain errors ([example](https://learn.hashicorp.com/tutorials/terraform/github-actions))
+  * Templates
+  * Comment on PRs that contain errors ([example](https://learn.hashicorp.com/tutorials/terraform/github-actions))

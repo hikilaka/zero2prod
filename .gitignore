@@ -2,3 +2,4 @@
 .idea
 zero2prod.iml
 *.terraform*
+*tfstate*
